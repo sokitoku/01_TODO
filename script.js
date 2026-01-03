@@ -5,6 +5,18 @@ const todoInput = document.getElementById('todoInput');
 const addBtn = document.getElementById('addBtn');
 const todoList = document.getElementById('todoList');
 
+// LocalStorage関連の関数
+function saveTodos() {
+    localStorage.setItem('todos', JSON.stringify(todos));
+}
+
+function loadTodos() {
+    const savedTodos = localStorage.getItem('todos');
+    if (savedTodos) {
+        todos = JSON.parse(savedTodos);
+    }
+}
+
 addBtn.addEventListener('click', addTodo);
 todoInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
@@ -27,11 +39,13 @@ function addTodo() {
 
     todos.push(todo);
     todoInput.value = '';
+    saveTodos();
     renderTodos();
 }
 
 function deleteTodo(id) {
     todos = todos.filter(todo => todo.id !== id);
+    saveTodos();
     renderTodos();
 }
 
@@ -39,6 +53,7 @@ function toggleComplete(id) {
     const todo = todos.find(todo => todo.id === id);
     if (todo) {
         todo.completed = !todo.completed;
+        saveTodos();
         renderTodos();
     }
 }
@@ -69,6 +84,7 @@ function saveEdit(id, newText) {
         todo.text = newText.trim();
     }
     editingId = null;
+    saveTodos();
     renderTodos();
 }
 
@@ -130,4 +146,6 @@ function renderTodos() {
     });
 }
 
+// ページ読み込み時にLocalStorageからデータを復元
+loadTodos();
 renderTodos();
